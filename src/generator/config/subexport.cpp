@@ -301,6 +301,8 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
                             singleproxy["plugin-opts"]["skip-cert-verify"] = scv.get();
                         break;
                 }
+                // Default UDP to true for Shadowsocks nodes
+                singleproxy["udp"] = true;
                 break;
             case ProxyType::VMess:
                 singleproxy["type"] = "vmess";
@@ -688,7 +690,8 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
 
         // UDP is not supported yet in clash using snell
         // sees in https://dreamacro.github.io/clash/configuration/outbound.html#snell
-        if (udp && x.Type != ProxyType::Snell && x.Type != ProxyType::TUIC)
+        // Shadowsocks UDP is handled specifically in its case statement
+        if (udp && x.Type != ProxyType::Snell && x.Type != ProxyType::TUIC && x.Type != ProxyType::Shadowsocks)
             singleproxy["udp"] = true;
         if (proxy_block)
             singleproxy.SetStyle(YAML::EmitterStyle::Block);
