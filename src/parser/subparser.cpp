@@ -1773,6 +1773,9 @@ void explodeStdHysteria2(std::string hysteria2, Proxy &node) {
     host = getUrlArg(addition, "sni");
     sni = getUrlArg(addition, "sni");
     ports = getUrlArg(addition, "ports");
+    if (ports.empty()) {
+        ports = getUrlArg(addition, "mport");
+    }
     if (remarks.empty())
         remarks = add + ":" + port;
 
