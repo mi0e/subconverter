@@ -688,6 +688,43 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
                 continue;
         }
 
+        // Export smux configuration (applicable to all proxy types)
+        if (!x.SmuxEnabled.is_undef() && x.SmuxEnabled.get()) {
+            singleproxy["smux"]["enabled"] = true;
+            if (!x.SmuxProtocol.empty()) {
+                singleproxy["smux"]["protocol"] = x.SmuxProtocol;
+            }
+            if (x.SmuxMaxConnections > 0) {
+                singleproxy["smux"]["max-connections"] = x.SmuxMaxConnections;
+            }
+            if (x.SmuxMinStreams > 0) {
+                singleproxy["smux"]["min-streams"] = x.SmuxMinStreams;
+            }
+            if (x.SmuxMaxStreams > 0) {
+                singleproxy["smux"]["max-streams"] = x.SmuxMaxStreams;
+            }
+            if (!x.SmuxPadding.is_undef()) {
+                singleproxy["smux"]["padding"] = x.SmuxPadding.get();
+            }
+            if (!x.SmuxStatistic.is_undef()) {
+                singleproxy["smux"]["statistic"] = x.SmuxStatistic.get();
+            }
+            if (!x.SmuxOnlyTcp.is_undef()) {
+                singleproxy["smux"]["only-tcp"] = x.SmuxOnlyTcp.get();
+            }
+            
+            // Export brutal-opts
+            if (!x.SmuxBrutalEnabled.is_undef() && x.SmuxBrutalEnabled.get()) {
+                singleproxy["smux"]["brutal-opts"]["enabled"] = true;
+                if (x.SmuxBrutalUp > 0) {
+                    singleproxy["smux"]["brutal-opts"]["up"] = x.SmuxBrutalUp;
+                }
+                if (x.SmuxBrutalDown > 0) {
+                    singleproxy["smux"]["brutal-opts"]["down"] = x.SmuxBrutalDown;
+                }
+            }
+        }
+
         // UDP is not supported yet in clash using snell
         // sees in https://dreamacro.github.io/clash/configuration/outbound.html#snell
         // Shadowsocks UDP is handled specifically in its case statement
