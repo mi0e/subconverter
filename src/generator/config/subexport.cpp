@@ -700,9 +700,8 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
             if (x.SmuxMinStreams > 0) {
                 singleproxy["smux"]["min-streams"] = x.SmuxMinStreams;
             }
-            if (x.SmuxMaxStreams > 0) {
-                singleproxy["smux"]["max-streams"] = x.SmuxMaxStreams;
-            }
+            // max-streams can be 0 (unlimited), so we always export it if smux is enabled
+            singleproxy["smux"]["max-streams"] = x.SmuxMaxStreams;
             if (!x.SmuxPadding.is_undef()) {
                 singleproxy["smux"]["padding"] = x.SmuxPadding.get();
             }
