@@ -1595,6 +1595,35 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes) {
                 continue;
         }
 
+        // Parse smux configuration (applicable to all proxy types)
+        if (singleproxy["smux"].IsDefined()) {
+            node.SmuxEnabled = safe_as<std::string>(singleproxy["smux"]["enabled"]);
+            singleproxy["smux"]["protocol"] >>= node.SmuxProtocol;
+            if (singleproxy["smux"]["max-connections"].IsDefined()) {
+                node.SmuxMaxConnections = safe_as<int>(singleproxy["smux"]["max-connections"]);
+            }
+            if (singleproxy["smux"]["min-streams"].IsDefined()) {
+                node.SmuxMinStreams = safe_as<int>(singleproxy["smux"]["min-streams"]);
+            }
+            if (singleproxy["smux"]["max-streams"].IsDefined()) {
+                node.SmuxMaxStreams = safe_as<int>(singleproxy["smux"]["max-streams"]);
+            }
+            node.SmuxPadding = safe_as<std::string>(singleproxy["smux"]["padding"]);
+            node.SmuxStatistic = safe_as<std::string>(singleproxy["smux"]["statistic"]);
+            node.SmuxOnlyTcp = safe_as<std::string>(singleproxy["smux"]["only-tcp"]);
+            
+            // Parse brutal-opts
+            if (singleproxy["smux"]["brutal-opts"].IsDefined()) {
+                node.SmuxBrutalEnabled = safe_as<std::string>(singleproxy["smux"]["brutal-opts"]["enabled"]);
+                if (singleproxy["smux"]["brutal-opts"]["up"].IsDefined()) {
+                    node.SmuxBrutalUp = safe_as<int>(singleproxy["smux"]["brutal-opts"]["up"]);
+                }
+                if (singleproxy["smux"]["brutal-opts"]["down"].IsDefined()) {
+                    node.SmuxBrutalDown = safe_as<int>(singleproxy["smux"]["brutal-opts"]["down"]);
+                }
+            }
+        }
+
         node.Id = index;
         nodes.emplace_back(std::move(node));
         index++;

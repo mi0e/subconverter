@@ -146,6 +146,21 @@ struct Proxy {
     String PacketEncoding;
     String Multiplexing;
     tribool V2rayHttpUpgrade;
+    
+    // SMUX (multiplexing) configuration
+    tribool SmuxEnabled;
+    String SmuxProtocol;
+    uint16_t SmuxMaxConnections = 0;
+    uint16_t SmuxMinStreams = 0;
+    uint16_t SmuxMaxStreams = 0;
+    tribool SmuxPadding;
+    tribool SmuxStatistic;
+    tribool SmuxOnlyTcp;
+    
+    // SMUX brutal-opts configuration
+    tribool SmuxBrutalEnabled;
+    uint32_t SmuxBrutalUp = 0;
+    uint32_t SmuxBrutalDown = 0;
 };
 
 #define SS_DEFAULT_GROUP "SSProvider"
