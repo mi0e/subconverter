@@ -622,6 +622,9 @@ void explodeSS(std::string ss, Proxy &node) {
         ps = server + ":" + port;
 
     ssConstruct(node, group, ps, server, port, password, method, plugin, pluginopts);
+    
+    // Parse smux parameters from URI
+    parseSmuxFromUri(addition, node);
 }
 
 void explodeSSD(std::string link, std::vector<Proxy> &nodes) {
@@ -795,6 +798,9 @@ void explodeSSR(std::string ssr, Proxy &node) {
     } else {
         ssrConstruct(node, group, remarks, server, port, protocol, method, obfs, password, obfsparam, protoparam);
     }
+    
+    // Parse smux parameters from URI
+    parseSmuxFromUri(strobfs, node);
 }
 
 void explodeSSRConf(std::string content, std::vector<Proxy> &nodes) {
@@ -1735,6 +1741,9 @@ void explodeStdVMess(std::string vmess, Proxy &node) {
     }
     vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", path, host, "", tls, "",
                    alpnList);
+    
+    // Parse smux parameters from URI
+    parseSmuxFromUri(addition, node);
 }
 
 
@@ -1772,6 +1781,9 @@ void explodeStdHysteria(std::string hysteria, Proxy &node) {
     hysteriaConstruct(node, HYSTERIA_DEFAULT_GROUP, remarks, add, port, type, auth, auth_str, host, up, down, alpn,
                       obfsParam,
                       insecure, "", sni);
+    
+    // Parse smux parameters from URI
+    parseSmuxFromUri(addition, node);
     return;
 }
 
@@ -1818,6 +1830,9 @@ void explodeStdMieru(std::string mieru, Proxy &node) {
     mieruConstruct(node, "MieruGroup", remarks, port,
                    password, host, ports, username, multiplexing, protocol,
                    udp, tfo, scv, tls13, "");
+    
+    // Parse smux parameters from URI
+    parseSmuxFromUri(addition, node);
 }
 
 void explodeStdHysteria2(std::string hysteria2, Proxy &node) {
@@ -1868,6 +1883,9 @@ void explodeStdHysteria2(std::string hysteria2, Proxy &node) {
 
     hysteria2Construct(node, HYSTERIA2_DEFAULT_GROUP, remarks, add, port, password, host, up, down, alpn, obfsParam,
                        obfsPassword, host, "", ports, tribool(), tribool(), scv);
+    
+    // Parse smux parameters from URI
+    parseSmuxFromUri(addition, node);
     return;
 }
 
@@ -1981,6 +1999,9 @@ void explodeShadowrocket(std::string rocket, Proxy &node) {
     }
     vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, cipher, path, host, "", tls, "",
                    alpnList);
+    
+    // Parse smux parameters from URI
+    parseSmuxFromUri(addition, node);
 }
 
 void explodeKitsunebi(std::string kit, Proxy &node) {
@@ -2021,6 +2042,9 @@ void explodeKitsunebi(std::string kit, Proxy &node) {
     }
     vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, cipher, path, host, "", tls, "",
                    alpnList);
+    
+    // Parse smux parameters from URI
+    parseSmuxFromUri(addition, node);
 }
 
 // peer = (public-key = bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=, allowed-ips = "0.0.0.0/0, ::/0", endpoint = engage.cloudflareclient.com:2408, client-id = 139/184/125),(public-key = bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=, endpoint = engage.cloudflareclient.com:2408)
@@ -3272,6 +3296,8 @@ void explodeTuic(const std::string &tuic, Proxy &node) {
                   tribool(),
                   tribool(), scv);
 
+    // Parse smux parameters from URI
+    parseSmuxFromUri(addition, node);
     return;
 }
 
@@ -3328,6 +3354,9 @@ void explodeAnyTLS(std::string anytls, Proxy &node) {
 
     anyTlSConstruct(node, ANYTLS_DEFAULT_GROUP, remarks, port, password, add, alpnList, fp, sni, udp, tfo, scv,
                     tribool(), "", 30, 30, 0);
+    
+    // Parse smux parameters from URI
+    parseSmuxFromUri(addition, node);
 }
 
 void explode(const std::string &link, Proxy &node) {
