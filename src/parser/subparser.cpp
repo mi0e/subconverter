@@ -323,6 +323,64 @@ void tuicConstruct(Proxy &node, const std::string &group, const std::string &rem
     node.RequestTimeout = request_timeout;
 }
 
+// Helper function to parse smux parameters from URI query string
+void parseSmuxFromUri(const std::string &addition, Proxy &node) {
+    std::string smuxEnabled = getUrlArg(addition, "smux-enabled");
+    if (!smuxEnabled.empty()) {
+        node.SmuxEnabled = smuxEnabled;
+    }
+    
+    std::string smuxProtocol = getUrlArg(addition, "smux-protocol");
+    if (!smuxProtocol.empty()) {
+        node.SmuxProtocol = smuxProtocol;
+    }
+    
+    std::string smuxMaxConnections = getUrlArg(addition, "smux-max-connections");
+    if (!smuxMaxConnections.empty()) {
+        node.SmuxMaxConnections = to_int(smuxMaxConnections);
+    }
+    
+    std::string smuxMinStreams = getUrlArg(addition, "smux-min-streams");
+    if (!smuxMinStreams.empty()) {
+        node.SmuxMinStreams = to_int(smuxMinStreams);
+    }
+    
+    std::string smuxMaxStreams = getUrlArg(addition, "smux-max-streams");
+    if (!smuxMaxStreams.empty()) {
+        node.SmuxMaxStreams = to_int(smuxMaxStreams);
+    }
+    
+    std::string smuxPadding = getUrlArg(addition, "smux-padding");
+    if (!smuxPadding.empty()) {
+        node.SmuxPadding = smuxPadding;
+    }
+    
+    std::string smuxStatistic = getUrlArg(addition, "smux-statistic");
+    if (!smuxStatistic.empty()) {
+        node.SmuxStatistic = smuxStatistic;
+    }
+    
+    std::string smuxOnlyTcp = getUrlArg(addition, "smux-only-tcp");
+    if (!smuxOnlyTcp.empty()) {
+        node.SmuxOnlyTcp = smuxOnlyTcp;
+    }
+    
+    // Parse brutal-opts
+    std::string smuxBrutalEnabled = getUrlArg(addition, "smux-brutal-enabled");
+    if (!smuxBrutalEnabled.empty()) {
+        node.SmuxBrutalEnabled = smuxBrutalEnabled;
+    }
+    
+    std::string smuxBrutalUp = getUrlArg(addition, "smux-brutal-up");
+    if (!smuxBrutalUp.empty()) {
+        node.SmuxBrutalUp = to_int(smuxBrutalUp);
+    }
+    
+    std::string smuxBrutalDown = getUrlArg(addition, "smux-brutal-down");
+    if (!smuxBrutalDown.empty()) {
+        node.SmuxBrutalDown = to_int(smuxBrutalDown);
+    }
+}
 
 void explodeVmess(std::string vmess, Proxy &node) {
     std::string version, ps, add, port, type, id, aid, net, path, host, tls, sni;
@@ -959,6 +1017,9 @@ void explodeTrojan(std::string trojan, Proxy &node) {
     }
     trojanConstruct(node, group, remark, server, port, psk, network, host, path, fp, sni, alpnList, true, tribool(),
                     tfo, scv);
+    
+    // Parse smux parameters from URI
+    parseSmuxFromUri(addition, node);
 }
 
 void explodeVless(std::string vless, Proxy &node) {
@@ -1872,6 +1933,9 @@ void explodeStdVless(std::string vless, Proxy &node) {
     sni = getUrlArg(addition, "sni");
     vlessConstruct(node, XRAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", flow, mode, path, host, "",
                    tls, pbk, sid, fp, sni, alpnList, packet_encoding);
+    
+    // Parse smux parameters from URI
+    parseSmuxFromUri(addition, node);
     return;
 }
 
