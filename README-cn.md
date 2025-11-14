@@ -2,14 +2,23 @@
 
 在各种订阅格式之间进行转换的实用程序.
 
-[![Build Status](https://github.com/tindy2013/subconverter/actions/workflows/build.yml/badge.svg)](https://github.com/tindy2013/subconverter/actions)
-[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/tindy2013/subconverter.svg)](https://github.com/tindy2013/subconverter/tags)
-[![GitHub release](https://img.shields.io/github/release/tindy2013/subconverter.svg)](https://github.com/tindy2013/subconverter/releases)
-[![GitHub license](https://img.shields.io/github/license/tindy2013/subconverter.svg)](https://github.com/tindy2013/subconverter/blob/master/LICENSE)
+[![Build Status](https://github.com/mi0e/subconverter/actions/workflows/build.yml/badge.svg)](https://github.com/mi0e/subconverter/actions)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/mi0e/subconverter.svg)](https://github.com/mi0e/subconverter/tags)
+[![GitHub release](https://img.shields.io/github/release/mi0e/subconverter.svg)](https://github.com/mi0e/subconverter/releases)
+[![GitHub license](https://img.shields.io/github/license/mi0e/subconverter.svg)](https://github.com/mi0e/subconverter/blob/master/LICENSE)
 
 * * *
 
 ## 新增内容
+
+2025/11/14
+
+-   新增 [支持类型](#支持类型) 中 `AnyTLS` 协议支持
+-   新增 SMUX brutal-opts 配置支持（TCP Brutal）
+-   更新 Clash DNS 配置，使用 `direct-nameserver` 替代旧的 `fallback` 方式
+
+<details>
+<summary><b>更新历史</b></summary>
 
 2021/10/1
 
@@ -135,6 +144,7 @@
 | Surge 4                |   ✓   |    ✓   | surge&ver=4    |
 | Trojan                 |   ✓   |    ✓   | trojan         |
 | V2Ray                  |   ✓   |    ✓   | v2ray          |
+| AnyTLS                 |   ✓   |    ×   | 仅支持 `&url=` 调用 |
 | 类 TG 代理的 HTTP/Socks 链接 |   ✓   |    ×   | 仅支持 `&url=` 调用 |
 | Mixed                  |   ×   |    ✓   | mixed          |
 | Auto                   |   ×   |    ✓   | auto           |
@@ -143,14 +153,18 @@
 
 1.  Shadowrocket 用户可以使用 `ss`、`ssr` 、 `v2ray` 以及 `mixed` 参数
 
-2.  类 TG 代理的 HTTP/Socks 链接由于没有命名设定，所以可以在后方插入`&remarks=`进行命名，同时也可以插入 `&group=` 设置组别名称，以上两个参数需要经过 [URLEncode](https://www.urlencoder.org/) 处理，例如
+2.  AnyTLS 是一种通用的 TLS 代理协议，支持使用 `anytls://password@host:port?参数` 格式的链接
+
+3.  类 TG 代理的 HTTP/Socks 链接由于没有命名设定，所以可以在后方插入`&remarks=`进行命名，同时也可以插入 `&group=` 设置组别名称，以上两个参数需要经过 [URLEncode](https://www.urlencoder.org/) 处理，例如
 
     -   tg://http?server=1.2.3.4&port=233&user=user&pass=pass&remarks=Example&group=xxx
     -   <https://t.me/http?server=1.2.3.4&port=233&user=user&pass=pass&remarks=Example&group=xxx>
 
-3.  目标类型为 `mixed` 时，会输出所有支持的节点的单链接组成的普通订阅（Base64编码）
+4.  目标类型为 `mixed` 时，会输出所有支持的节点的单链接组成的普通订阅（Base64编码）
 
-4.  目标类型为 `auto` 时，会根据请求的 `User-Agent` 自动判断输出的目标类型，匹配规则可参见 [此处](https://github.com/tindy2013/subconverter/blob/master/src/handler/interfaces.cpp#L121) （该链接有可能因为代码修改而不能准确指向相应的代码）
+5.  目标类型为 `auto` 时，会根据请求的 `User-Agent` 自动判断输出的目标类型，匹配规则可参见 [此处](https://github.com/mi0e/subconverter/blob/master/src/handler/interfaces.cpp#L121) （该链接有可能因为代码修改而不能准确指向相应的代码）
+
+6.  支持 SMUX brutal-opts 配置（TCP Brutal），用于优化多路复用传输性能
 
 * * *
 
@@ -382,7 +396,7 @@ http://127.0.0.1:25500/getprofile?name=%NAME%&token=%TOKEN%
 
 应当注意的是，此处文件内的参数**无需进行 URLEncode**，且此处的 `token` 与 `api_mode` 的状态无关。
 
-在程序目录内的任意位置创建一个新的文档文件（推荐保存至 `profiles` 文件夹内，以使整洁目录及便于后续维护），如 `formyairport.ini`，并仿照 [示例文档](https://github.com/tindy2013/subconverter/blob/master/base/profiles/example_profile.ini) 根据配置好的参数填写进去即可。
+在程序目录内的任意位置创建一个新的文档文件（推荐保存至 `profiles` 文件夹内，以使整洁目录及便于后续维护），如 `formyairport.ini`，并仿照 [示例文档](https://github.com/mi0e/subconverter/blob/master/base/profiles/example_profile.ini) 根据配置好的参数填写进去即可。
 
 <details>
 <summary>举个例子：</summary>
@@ -408,7 +422,7 @@ exclude=(流量|官网)
 
 > 关于 subconverter 主程序目录中 `pref.ini` 文件的解释，其余格式的配置文件不再赘述，与之相仿。
 
-注：本部分内容以本程序中的 [`pref.example.ini`](https://github.com/tindy2013/subconverter/blob/master/base/pref.example.ini) 或 [`pref.example.yml`](https://github.com/tindy2013/subconverter/blob/master/base/pref.example.yml) 或 [`pref.example.toml`](https://github.com/tindy2013/subconverter/blob/master/base/pref.example.toml) 为准，本文档可能由于更新不及时，内容不适用于新版本。
+注：本部分内容以本程序中的 [`pref.example.ini`](https://github.com/mi0e/subconverter/blob/master/base/pref.example.ini) 或 [`pref.example.yml`](https://github.com/mi0e/subconverter/blob/master/base/pref.example.yml) 或 [`pref.example.toml`](https://github.com/mi0e/subconverter/blob/master/base/pref.example.toml) 为准，本文档可能由于更新不及时，内容不适用于新版本。
 
 加载配置文件时会按照`pref.toml`、`pref.yml`、`pref.ini`的优先级顺序加载优先级高的配置文件
 
@@ -1135,7 +1149,7 @@ custom_proxy_group=节点选择`select`(^(?!.*(美国|日本)).*)
 
 > 本部分用于 链接参数 **`&config=`**
 
-注：本部分内容以本程序中的 [`/config/example_external_config.ini`](https://github.com/tindy2013/subconverter/blob/master/base/config/example_external_config.ini) 或 [`/config/example_external_config.yml`](https://github.com/tindy2013/subconverter/blob/master/base/config/example_external_config.yml) 或 [`/config/example_external_config.toml`](https://github.com/tindy2013/subconverter/blob/master/base/config/example_external_config.toml) 为准，本文档可能由于更新不及时，内容不适用于新版本。
+注：本部分内容以本程序中的 [`/config/example_external_config.ini`](https://github.com/mi0e/subconverter/blob/master/base/config/example_external_config.ini) 或 [`/config/example_external_config.yml`](https://github.com/mi0e/subconverter/blob/master/base/config/example_external_config.yml) 或 [`/config/example_external_config.toml`](https://github.com/mi0e/subconverter/blob/master/base/config/example_external_config.toml) 为准，本文档可能由于更新不及时，内容不适用于新版本。
 
 将文件按照以下格式写好，上传至 Github Gist 或者 其他**可访问**网络位置
 经过 [URLEncode](https://www.urlencoder.org/) 处理后，添加至 `&config=` 即可调用
@@ -1367,7 +1381,7 @@ http://127.0.0.1:25500/render?path=xxx&额外的调试或控制参数
 
 > 启动程序后，在本地生成对应的配置文件文本
 
-在程序目录内的 [generate.ini](https://github.com/tindy2013/subconverter/blob/master/base/generate.ini) 中设定文件块(`[xxx]`)，生成的文件名(path=xxx)以及其所需要包含的参数，例如：
+在程序目录内的 [generate.ini](https://github.com/mi0e/subconverter/blob/master/base/generate.ini) 中设定文件块(`[xxx]`)，生成的文件名(path=xxx)以及其所需要包含的参数，例如：
 
 ```ini
 [test]
@@ -1389,7 +1403,7 @@ profile=profiles/example_profile.ini
 
 > 自动上传 gist ，可以用于 Clash For Android / Surge 等进行远程订阅
 
-在程序目录内的 [gistconf.ini](https://github.com/tindy2013/subconverter/blob/master/base/gistconf.ini) 中添加 `Personal Access Token`（[在此创建](https://github.com/settings/tokens/new?scopes=gist&description=Subconverter)）例如：
+在程序目录内的 [gistconf.ini](https://github.com/mi0e/subconverter/blob/master/base/gistconf.ini) 中添加 `Personal Access Token`（[在此创建](https://github.com/settings/tokens/new?scopes=gist&description=Subconverter)）例如：
 
 ```ini
 [common]
@@ -1443,3 +1457,11 @@ http://127.0.0.1:25500/getruleset?type=%TYPE%&url=%URL%&group=%GROUP%
 | group | type=2时必选 | mygroup | 规则对应的策略组名，生成Quantumult X类型（type=2）时必须提供                                                                                                                  |
 
 运行 subconverter 主程序后， 按照 [调用地址 (规则转换)](#调用地址-规则转换) 的对应内容替换即可得到指定类型的规则。
+
+## 致谢
+
+本项目基于 [tindy2013 的 subconverter](https://github.com/tindy2013/subconverter) 开发。特别感谢原作者及所有贡献者。
+
+原始仓库：
+- [tindy2013/subconverter](https://github.com/tindy2013/subconverter)
+- [asdlokj1qpi23/subconverter](https://github.com/asdlokj1qpi23/subconverter)
