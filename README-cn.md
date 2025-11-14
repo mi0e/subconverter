@@ -1443,3 +1443,11 @@ http://127.0.0.1:25500/getruleset?type=%TYPE%&url=%URL%&group=%GROUP%
 | group | type=2时必选 | mygroup | 规则对应的策略组名，生成Quantumult X类型（type=2）时必须提供                                                                                                                  |
 
 运行 subconverter 主程序后， 按照 [调用地址 (规则转换)](#调用地址-规则转换) 的对应内容替换即可得到指定类型的规则。
+
+## 致谢
+
+本项目基于 [tindy2013 的 subconverter](https://github.com/tindy2013/subconverter) 开发。特别感谢原作者及所有贡献者。
+
+原始仓库：
+- [tindy2013/subconverter](https://github.com/tindy2013/subconverter)
+- [asdlokj1qpi23/subconverter](https://github.com/asdlokj1qpi23/subconverter)
