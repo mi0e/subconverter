@@ -17,25 +17,19 @@ dns:
     - '*.local'
     - 'localhost'
     - '*.direct'
+  default-nameserver:
+    - tls://223.5.5.5
+    - tls://223.6.6.6
   nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
-    - 180.76.76.76
-  fallback:
-    - https://1.1.1.1/dns-query
-    - https://8.8.8.8/dns-query
-    - https://9.9.9.9/dns-query
-  fallback-filter:
-    geoip: true
-    geoip-code: CN
-    ipcidr:
-      - 240.0.0.0/4
-    domain:
-      - '+.google.com'
-      - '+.facebook.com'
-      - '+.youtube.com'
-      - '+.twitter.com'
-      - '+.github.com'
+    - https://cloudflare-dns.com/dns-query
+    - https://dns.google/dns-query
+  proxy-server-nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  direct-nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  respect-rules: true
 {% if local.clash.new_field_name == "true" %}
 proxies: ~
 proxy-groups: ~
