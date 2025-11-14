@@ -19,6 +19,7 @@ Utility to convert between various proxy subscription formats.
     - [Description](#description)
   - [Advanced Usage](#advanced-usage)
   - [Auto Upload](#auto-upload)
+  - [Recent Updates](#recent-updates)
   
 ## Docker
 
@@ -61,6 +62,7 @@ services:
 | Surge 4                           |     ✓     |      ✓       | surge&ver=4    |
 | Surge 5                           |     ✓     |      ✓       | surge&ver=5    |
 | V2Ray                             |     ✓     |      ✓       | v2ray          |
+| AnyTLS                            |     ✓     |      ×       | Only as source |
 | Telegram-liked HTTP/Socks 5 links |     ✓     |      ×       | Only as source |
 | Singbox                           |     ✓      |      ✓       | singbox        |
 
@@ -68,11 +70,15 @@ Notice:
 
 1. Shadowrocket users should use `ss`, `ssr` or `v2ray` as target.
 
-2. You can add `&remark=` to Telegram-liked HTTP/Socks 5 links to set a remark for this node. For example:
+2. AnyTLS is a general TLS proxy protocol. It supports links in the format `anytls://password@host:port?parameters`.
+
+3. You can add `&remark=` to Telegram-liked HTTP/Socks 5 links to set a remark for this node. For example:
 
    - tg://http?server=1.2.3.4&port=233&user=user&pass=pass&remark=Example
 
    - https://t.me/http?server=1.2.3.4&port=233&user=user&pass=pass&remark=Example
+
+4. TCP Brutal (SMUX brutal-opts) is supported for optimizing multiplexing performance.
 
 
 ---
@@ -135,6 +141,14 @@ Example:
 ;uncomment the following line and enter your token to enable upload function
 token = xxxxxxxxxxxxxxxxxxxxxxxx(Your Personal Access Token)
 ```
+
+## Recent Updates
+
+**2025/11/14**
+- Added AnyTLS protocol support
+- Added TCP Brutal (SMUX brutal-opts) configuration support for optimizing multiplexing performance
+- Updated Clash DNS configuration to use `direct-nameserver` instead of the deprecated `fallback` method
+
 ## Acknowledgments
 
 This project is based on [tindy2013's subconverter](https://github.com/tindy2013/subconverter). Many thanks to the original author and all contributors.

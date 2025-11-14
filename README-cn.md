@@ -11,6 +11,15 @@
 
 ## 新增内容
 
+2025/11/14
+
+-   新增 [支持类型](#支持类型) 中 `AnyTLS` 协议支持
+-   新增 SMUX brutal-opts 配置支持（TCP Brutal）
+-   更新 Clash DNS 配置，使用 `direct-nameserver` 替代旧的 `fallback` 方式
+
+<details>
+<summary><b>更新历史</b></summary>
+
 2021/10/1
 
 -   新增 [配置文件](#配置文件) 中 `[advanced]` 部分的说明
@@ -135,6 +144,7 @@
 | Surge 4                |   ✓   |    ✓   | surge&ver=4    |
 | Trojan                 |   ✓   |    ✓   | trojan         |
 | V2Ray                  |   ✓   |    ✓   | v2ray          |
+| AnyTLS                 |   ✓   |    ×   | 仅支持 `&url=` 调用 |
 | 类 TG 代理的 HTTP/Socks 链接 |   ✓   |    ×   | 仅支持 `&url=` 调用 |
 | Mixed                  |   ×   |    ✓   | mixed          |
 | Auto                   |   ×   |    ✓   | auto           |
@@ -143,14 +153,18 @@
 
 1.  Shadowrocket 用户可以使用 `ss`、`ssr` 、 `v2ray` 以及 `mixed` 参数
 
-2.  类 TG 代理的 HTTP/Socks 链接由于没有命名设定，所以可以在后方插入`&remarks=`进行命名，同时也可以插入 `&group=` 设置组别名称，以上两个参数需要经过 [URLEncode](https://www.urlencoder.org/) 处理，例如
+2.  AnyTLS 是一种通用的 TLS 代理协议，支持使用 `anytls://password@host:port?参数` 格式的链接
+
+3.  类 TG 代理的 HTTP/Socks 链接由于没有命名设定，所以可以在后方插入`&remarks=`进行命名，同时也可以插入 `&group=` 设置组别名称，以上两个参数需要经过 [URLEncode](https://www.urlencoder.org/) 处理，例如
 
     -   tg://http?server=1.2.3.4&port=233&user=user&pass=pass&remarks=Example&group=xxx
     -   <https://t.me/http?server=1.2.3.4&port=233&user=user&pass=pass&remarks=Example&group=xxx>
 
-3.  目标类型为 `mixed` 时，会输出所有支持的节点的单链接组成的普通订阅（Base64编码）
+4.  目标类型为 `mixed` 时，会输出所有支持的节点的单链接组成的普通订阅（Base64编码）
 
-4.  目标类型为 `auto` 时，会根据请求的 `User-Agent` 自动判断输出的目标类型，匹配规则可参见 [此处](https://github.com/mi0e/subconverter/blob/master/src/handler/interfaces.cpp#L121) （该链接有可能因为代码修改而不能准确指向相应的代码）
+5.  目标类型为 `auto` 时，会根据请求的 `User-Agent` 自动判断输出的目标类型，匹配规则可参见 [此处](https://github.com/mi0e/subconverter/blob/master/src/handler/interfaces.cpp#L121) （该链接有可能因为代码修改而不能准确指向相应的代码）
+
+6.  支持 SMUX brutal-opts 配置（TCP Brutal），用于优化多路复用传输性能
 
 * * *
 
