@@ -13,22 +13,25 @@ dns:
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-    - '*.lan'
-    - '*.local'
-    - 'localhost'
-    - '*.direct'
+    - "*.lan"
+    - "*.local"
+    - localhost
+    - "*.direct"
   default-nameserver:
-    - tls://223.5.5.5
-    - tls://223.6.6.6
+    - quic://223.5.5.5
+    - quic://223.6.6.6
+    - tls://1.12.12.12
   nameserver:
-    - https://cloudflare-dns.com/dns-query
-    - https://dns.google/dns-query
+    - quic://1.1.1.1
+    - quic://8.8.8.8
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
   proxy-server-nameserver:
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
+    - quic://223.5.5.5
+    - quic://223.6.6.6
   direct-nameserver:
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
+    - https://223.5.5.5/dns-query
+    - https://223.6.6.6/dns-query
   respect-rules: true
 {% if local.clash.new_field_name == "true" %}
 proxies: ~
