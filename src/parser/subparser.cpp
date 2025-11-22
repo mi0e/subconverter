@@ -1762,7 +1762,7 @@ void explodeStdVMess(std::string vmess, Proxy &node) {
     tls13 = getUrlArg(addition, "tls13");
     
     vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", path, host, "", tls, "",
-                   alpnList, udp, tfo, scv, tls13);
+                   alpnList, udp, tfo, scv, tls13, "");
     
     // Parse smux parameters from URI
     parseSmuxFromUri(addition, node);
@@ -1984,9 +1984,10 @@ void explodeStdVless(std::string vless, Proxy &node) {
     udp = getUrlArg(addition, "udp");
     tfo = getUrlArg(addition, "tfo");
     tls13 = getUrlArg(addition, "tls13");
+    tribool v2ray_http_upgrade = getUrlArg(addition, "v2ray-http-upgrade");
     
     vlessConstruct(node, XRAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", flow, mode, path, host, "",
-                   tls, pbk, sid, fp, sni, alpnList, packet_encoding, udp, tfo, scv, tls13);
+                   tls, pbk, sid, fp, sni, alpnList, packet_encoding, udp, tfo, scv, tls13, "", v2ray_http_upgrade);
     
     // Parse smux parameters from URI
     parseSmuxFromUri(addition, node);
