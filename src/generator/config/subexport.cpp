@@ -502,8 +502,13 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
                     singleproxy["skip-cert-verify"] = scv.get();
                 if (x.Insecure == "1")
                     singleproxy["skip-cert-verify"] = true;
-                if (!x.Alpn.empty())
-                    singleproxy["alpn"].push_back(x.Alpn);
+                if (!x.Alpn.empty()) {
+                    auto alpns = split(x.Alpn, ",");
+                    for (auto &item : alpns) {
+                        if (!item.empty())
+                            singleproxy["alpn"].push_back(trim(item));
+                    }
+                }
                 if (!x.OBFSParam.empty())
                     singleproxy["obfs"] = x.OBFSParam;
                 break;
@@ -523,8 +528,13 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
                     singleproxy["down"] = x.DownMbps;
                 if (!scv.is_undef())
                     singleproxy["skip-cert-verify"] = scv.get();
-                if (!x.Alpn.empty())
-                    singleproxy["alpn"].push_back(x.Alpn);
+                if (!x.Alpn.empty()) {
+                    auto alpns = split(x.Alpn, ",");
+                    for (auto &item : alpns) {
+                        if (!item.empty())
+                            singleproxy["alpn"].push_back(trim(item));
+                    }
+                }
                 if (!x.OBFSParam.empty())
                     singleproxy["obfs"] = x.OBFSParam;
                 if (!x.OBFSPassword.empty())
@@ -548,8 +558,13 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
                 }
                 if (!scv.is_undef())
                     singleproxy["skip-cert-verify"] = scv.get();
-                if (!x.Alpn.empty())
-                    singleproxy["alpn"].push_back(x.Alpn);
+                if (!x.Alpn.empty()) {
+                    auto alpns = split(x.Alpn, ",");
+                    for (auto &item : alpns) {
+                        if (!item.empty())
+                            singleproxy["alpn"].push_back(trim(item));
+                    }
+                }
                 singleproxy["disable-sni"] = x.DisableSni.get();
                 singleproxy["reduce-rtt"] = x.ReduceRtt.get();
                 singleproxy["request-timeout"] = x.RequestTimeout;
