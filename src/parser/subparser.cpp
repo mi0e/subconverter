@@ -1019,7 +1019,11 @@ void explodeTrojan(std::string trojan, Proxy &node) {
     std::string alpn = getUrlArg(addition, "alpn");
     std::vector<std::string> alpnList;
     if (!alpn.empty()) {
-        alpnList.push_back(alpn);
+        auto alpns = split(alpn, ",");
+        for (auto &item : alpns) {
+            if (!item.empty())
+                alpnList.emplace_back(item);
+        }
     }
     trojanConstruct(node, group, remark, server, port, psk, network, host, path, fp, sni, alpnList, true, tribool(),
                     tfo, scv);
@@ -1544,7 +1548,7 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes) {
                 bool vless_udp;
                 singleproxy["udp"] >> vless_udp;
                 vlessConstruct(node, XRAY_DEFAULT_GROUP, ps, server, port, type, id, aid, net, "auto", flow, mode, path,
-                               host, "", tls, pbk, sid, fp, sni, alpnList, packet_encoding, udp, tribool(), tribool(),
+                               host, "", tls, pbk, sid, fp, sni, alpnList, packet_encoding, udp, tribool(), scv,
                                tribool(), "", v2ray_http_upgrade);
                 break;
             case "hysteria"_hash:
@@ -1737,7 +1741,11 @@ void explodeStdVMess(std::string vmess, Proxy &node) {
     std::string alpn = getUrlArg(addition, "alpn");
     std::vector<std::string> alpnList;
     if (!alpn.empty()) {
-        alpnList.push_back(alpn);
+        auto alpns = split(alpn, ",");
+        for (auto &item : alpns) {
+            if (!item.empty())
+                alpnList.emplace_back(item);
+        }
     }
     vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", path, host, "", tls, "",
                    alpnList);
@@ -1916,7 +1924,11 @@ void explodeStdVless(std::string vless, Proxy &node) {
     std::string alpn = getUrlArg(addition, "alpn");
     std::vector<std::string> alpnList;
     if (!alpn.empty()) {
-        alpnList.push_back(alpn);
+        auto alpns = split(alpn, ",");
+        for (auto &item : alpns) {
+            if (!item.empty())
+                alpnList.emplace_back(item);
+        }
     }
     switch (hash_(net)) {
         case "tcp"_hash:
@@ -1995,7 +2007,11 @@ void explodeShadowrocket(std::string rocket, Proxy &node) {
     std::string alpn = getUrlArg(addition, "alpn");
     std::vector<std::string> alpnList;
     if (!alpn.empty()) {
-        alpnList.push_back(alpn);
+        auto alpns = split(alpn, ",");
+        for (auto &item : alpns) {
+            if (!item.empty())
+                alpnList.emplace_back(item);
+        }
     }
     vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, cipher, path, host, "", tls, "",
                    alpnList);
@@ -2038,7 +2054,11 @@ void explodeKitsunebi(std::string kit, Proxy &node) {
     std::string alpn = getUrlArg(addition, "alpn");
     std::vector<std::string> alpnList;
     if (!alpn.empty()) {
-        alpnList.push_back(alpn);
+        auto alpns = split(alpn, ",");
+        for (auto &item : alpns) {
+            if (!item.empty())
+                alpnList.emplace_back(item);
+        }
     }
     vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, cipher, path, host, "", tls, "",
                    alpnList);
