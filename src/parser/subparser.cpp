@@ -1704,6 +1704,7 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes) {
 void explodeStdVMess(std::string vmess, Proxy &node) {
     std::string add, port, type, id, aid, net, path, host, tls, remarks;
     std::string addition;
+    tribool scv, udp, tfo, tls13;
     vmess = vmess.substr(8);
     string_size pos;
 
@@ -1747,8 +1748,21 @@ void explodeStdVMess(std::string vmess, Proxy &node) {
                 alpnList.emplace_back(item);
         }
     }
+    
+    // Parse allowInsecure or skip-cert-verify parameter
+    scv = getUrlArg(addition, "allowInsecure");
+    if (scv.is_undef())
+        scv = getUrlArg(addition, "skip-cert-verify");
+    if (scv.is_undef())
+        scv = getUrlArg(addition, "skipCertVerify");
+    
+    // Parse other optional parameters
+    udp = getUrlArg(addition, "udp");
+    tfo = getUrlArg(addition, "tfo");
+    tls13 = getUrlArg(addition, "tls13");
+    
     vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", path, host, "", tls, "",
-                   alpnList);
+                   alpnList, udp, tfo, scv, tls13);
     
     // Parse smux parameters from URI
     parseSmuxFromUri(addition, node);
@@ -1897,6 +1911,7 @@ void explodeStdHysteria2(std::string hysteria2, Proxy &node) {
 void explodeStdVless(std::string vless, Proxy &node) {
     std::string add, port, type, id, aid, net, flow, pbk, sid, fp, mode, path, host, tls, remarks, sni;
     std::string addition;
+    tribool scv, udp, tfo, tls13;
     vless = vless.substr(8);
     string_size pos;
 
@@ -1957,8 +1972,21 @@ void explodeStdVless(std::string vless, Proxy &node) {
     if (remarks.empty())
         remarks = add + ":" + port;
     sni = getUrlArg(addition, "sni");
+    
+    // Parse allowInsecure or skip-cert-verify parameter
+    scv = getUrlArg(addition, "allowInsecure");
+    if (scv.is_undef())
+        scv = getUrlArg(addition, "skip-cert-verify");
+    if (scv.is_undef())
+        scv = getUrlArg(addition, "skipCertVerify");
+    
+    // Parse other optional parameters
+    udp = getUrlArg(addition, "udp");
+    tfo = getUrlArg(addition, "tfo");
+    tls13 = getUrlArg(addition, "tls13");
+    
     vlessConstruct(node, XRAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", flow, mode, path, host, "",
-                   tls, pbk, sid, fp, sni, alpnList, packet_encoding);
+                   tls, pbk, sid, fp, sni, alpnList, packet_encoding, udp, tfo, scv, tls13);
     
     // Parse smux parameters from URI
     parseSmuxFromUri(addition, node);
