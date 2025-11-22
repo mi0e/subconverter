@@ -1782,10 +1782,6 @@ void explodeStdHysteria(std::string hysteria, Proxy &node) {
 
     if (remarks.empty())
         remarks = add + ":" + port;
-    std::vector<std::string> alpnList;
-    if (!alpn.empty()) {
-        alpnList.push_back(alpn);
-    }
     hysteriaConstruct(node, HYSTERIA_DEFAULT_GROUP, remarks, add, port, type, auth, auth_str, host, up, down, alpn,
                       obfsParam,
                       insecure, "", sni);
