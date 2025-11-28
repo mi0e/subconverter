@@ -136,7 +136,8 @@ void httpConstruct(Proxy &node, const std::string &group, const std::string &rem
 void trojanConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &server,
                      const std::string &port, const std::string &password, const std::string &network,
                      const std::string &host, const std::string &path, const std::string &fp, const std::string &sni,
-                     const std::vector<std::string> &alpnList,
+                     const std::vector<std::string> &alpnList, const std::string &tls,
+                     const std::string &pbk, const std::string &sid,
                      bool tlssecure,
                      tribool udp, tribool tfo,
                      tribool scv, tribool tls13, const std::string &underlying_proxy) {
@@ -149,6 +150,9 @@ void trojanConstruct(Proxy &node, const std::string &group, const std::string &r
     node.Fingerprint = fp;
     node.ServerName = sni;
     node.AlpnList = alpnList;
+    node.TLSStr = tls;
+    node.PublicKey = pbk;
+    node.ShortId = sid;
 }
 
 void snellConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &server,
@@ -962,6 +966,7 @@ void explodeHTTPSub(std::string link, Proxy &node) {
 
 void explodeTrojan(std::string trojan, Proxy &node) {
     std::string server, port, psk, addition, group, remark, host, path, network, fp, sni;
+    std::string tls, pbk, sid;
     tribool tfo, scv;
     if (startsWith(trojan, "trojan://")) {
         trojan.erase(0, 9);
@@ -993,6 +998,11 @@ void explodeTrojan(std::string trojan, Proxy &node) {
     fp = getUrlArg(addition, "fp");
     scv = getUrlArg(addition, "allowInsecure");
     group = urlDecode(getUrlArg(addition, "group"));
+    
+    // Parse reality parameters
+    tls = getUrlArg(addition, "security");
+    pbk = getUrlArg(addition, "pbk");
+    sid = getUrlArg(addition, "sid");
 
     if (getUrlArg(addition, "ws") == "1") {
         path = getUrlArg(addition, "wspath");
@@ -1025,8 +1035,12 @@ void explodeTrojan(std::string trojan, Proxy &node) {
                 alpnList.emplace_back(item);
         }
     }
-    trojanConstruct(node, group, remark, server, port, psk, network, host, path, fp, sni, alpnList, true, tribool(),
-                    tfo, scv);
+    
+    // Determine TLS secure based on security parameter
+    bool tlssecure = tls.empty() || tls == "tls" || tls == "reality";
+    
+    trojanConstruct(node, group, remark, server, port, psk, network, host, path, fp, sni, alpnList, tls, pbk, sid,
+                    tlssecure, tribool(), tfo, scv);
     
     // Parse smux parameters from URI
     parseSmuxFromUri(addition, node);
@@ -1230,7 +1244,7 @@ void explodeNetch(std::string netch, Proxy &node) {
             if (group.empty())
                 group = TROJAN_DEFAULT_GROUP;
             trojanConstruct(node, group, remark, address, port, password, transprot, host, path, fp, sni,
-                            std::vector<std::string>{}, tls == "true",
+                            std::vector<std::string>{}, "", "", "", tls == "true",
                             udp,
                             tfo, scv);
             break;
@@ -1453,9 +1467,18 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes) {
                         break;
                 }
                 singleproxy["alpn"] >>= alpnList;
+                
+                // Parse reality-opts for trojan
+                tls = safe_as<std::string>(singleproxy["tls"]) == "true" ? "tls" : "";
+                if (singleproxy["reality-opts"].IsDefined()) {
+                    tls = "reality";
+                    singleproxy["reality-opts"]["public-key"] >>= pbk;
+                    singleproxy["reality-opts"]["short-id"] >>= sid;
+                }
+                singleproxy["client-fingerprint"] >>= fp;
 
-                trojanConstruct(node, group, ps, server, port, password, net, host, path, fp, sni, alpnList, true, udp,
-                                tfo, scv);
+                trojanConstruct(node, group, ps, server, port, password, net, host, path, fp, sni, alpnList, tls, pbk, sid,
+                                true, udp, tfo, scv);
                 break;
             case "snell"_hash:
                 group = SNELL_DEFAULT_GROUP;
@@ -2442,7 +2465,7 @@ bool explodeSurge(std::string surge, std::vector<Proxy> &nodes) {
                 }
 
                 trojanConstruct(node, TROJAN_DEFAULT_GROUP, remarks, server, port, password, "", host, "", fp, sni,
-                                std::vector<std::string>{},
+                                std::vector<std::string>{}, "", "", "",
                                 true,
                                 udp,
                                 tfo, scv);
@@ -2824,7 +2847,7 @@ bool explodeSurge(std::string surge, std::vector<Proxy> &nodes) {
                             remarks = server + ":" + port;
 
                         trojanConstruct(node, TROJAN_DEFAULT_GROUP, remarks, server, port, password, "", host, "", fp,
-                                        sni, std::vector<std::string>{},
+                                        sni, std::vector<std::string>{}, "", "", "",
                                         tls == "true", udp, tfo, scv, tls13);
                         break;
                     case "http"_hash: //quantumult x style http links
@@ -3148,7 +3171,7 @@ void explodeSingbox(rapidjson::Value &outbounds, std::vector<Proxy> &nodes) {
                         password = GetMember(singboxNode, "password");
                         explodeSingboxTransport(singboxNode, net, host, path, edge);
                         trojanConstruct(node, group, ps, server, port, password, net, host, path, fp, sni, alpnList,
-                                        true, udp,
+                                        tls, pbk, sid, true, udp,
                                         tfo,
                                         scv);
                         break;

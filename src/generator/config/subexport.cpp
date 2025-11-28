@@ -437,6 +437,19 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
                 }
                 if (!scv.is_undef())
                     singleproxy["skip-cert-verify"] = scv.get();
+                // Add reality-opts for trojan if public key is present
+                if (!x.PublicKey.empty()) {
+                    singleproxy["reality-opts"]["public-key"] = x.PublicKey;
+                }
+                if (!x.ShortId.empty()) {
+                    singleproxy["reality-opts"]["short-id"] = x.ShortId;
+                }
+                // Set client-fingerprint: use custom fingerprint if provided, otherwise default to chrome for reality
+                if (!x.Fingerprint.empty()) {
+                    singleproxy["client-fingerprint"] = x.Fingerprint;
+                } else if (!x.PublicKey.empty()) {
+                    singleproxy["client-fingerprint"] = "chrome";
+                }
                 switch (hash_(x.TransferProtocol)) {
                     case "tcp"_hash:
                         break;
@@ -1422,6 +1435,16 @@ std::string proxyToSingle(std::vector<Proxy> &nodes, int types, extra_settings &
                     proxyStr += "&ws=1";
                     if (!path.empty())
                         proxyStr += "&wspath=" + urlEncode(path);
+                }
+                // Add reality parameters for trojan
+                if (!x.PublicKey.empty() || x.TLSStr == "reality") {
+                    proxyStr += "&security=reality";
+                    if (!x.PublicKey.empty())
+                        proxyStr += "&pbk=" + x.PublicKey;
+                    if (!x.ShortId.empty())
+                        proxyStr += "&sid=" + x.ShortId;
+                    if (!x.Fingerprint.empty())
+                        proxyStr += "&fp=" + x.Fingerprint;
                 }
                 proxyStr += "#" + urlEncode(remark);
                 break;
@@ -2953,7 +2976,7 @@ proxyToSingBox(std::vector<Proxy> &nodes, rapidjson::Document &json,
                 tls.AddMember("alpn", alpns, allocator);
             }
             tls.AddMember("insecure", buildBooleanValue(scv), allocator);
-            if (x.Type == ProxyType::VLESS) {
+            if (x.Type == ProxyType::VLESS || x.Type == ProxyType::Trojan) {
                 rapidjson::Value reality(rapidjson::kObjectType);
                 if (!x.PublicKey.empty() || !x.ShortId.empty()) {
                     rapidjson::Value utls(rapidjson::kObjectType);
