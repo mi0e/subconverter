@@ -442,13 +442,13 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
                     singleproxy["reality-opts"]["public-key"] = x.PublicKey;
                 }
                 if (!x.ShortId.empty()) {
-                    singleproxy["reality-opts"]["short-id"] = "" + x.ShortId;
+                    singleproxy["reality-opts"]["short-id"] = x.ShortId;
                 }
-                if (!x.PublicKey.empty()) {
-                    singleproxy["client-fingerprint"] = "chrome";
-                }
+                // Set client-fingerprint: use custom fingerprint if provided, otherwise default to chrome for reality
                 if (!x.Fingerprint.empty()) {
                     singleproxy["client-fingerprint"] = x.Fingerprint;
+                } else if (!x.PublicKey.empty()) {
+                    singleproxy["client-fingerprint"] = "chrome";
                 }
                 switch (hash_(x.TransferProtocol)) {
                     case "tcp"_hash:
