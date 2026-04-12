@@ -2,36 +2,98 @@
 
 port: {{ default(global.clash.http_port, "7890") }}
 socks-port: {{ default(global.clash.socks_port, "7891") }}
-allow-lan: {{ default(global.clash.allow_lan, "true") }}
-mode: Rule
+mixed-port: {{ default(global.clash.mixed_port, "7892") }}
+allow-lan: {{ default(global.clash.allow_lan, "false") }}
+bind-address: '*'
+mode: rule
 log-level: {{ default(global.clash.log_level, "info") }}
+ipv6: false
+find-process-mode: strict
 external-controller: {{ default(global.clash.external_controller, "127.0.0.1:9090") }}
+profile:
+  store-selected: true
+  store-fake-ip: true
+unified-delay: true
+tcp-concurrent: true
+global-client-fingerprint: chrome
+ntp:
+  enable: true
+  write-to-system: false
+  server: ntp.aliyun.com
+  port: 123
+  interval: 30
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
 dns:
   enable: true
-  listen: 0.0.0.0:53
-  ipv6: false
+  listen: ':53'
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  fake-ip-filter:
-    - "*.lan"
-    - "*.local"
-    - localhost
-    - "*.direct"
-    - "time.*.com"
-    - "pool.ntp.org"
-  default-nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
-  nameserver:
-    - https://1.1.1.1/dns-query
-    - https://8.8.8.8/dns-query
-  proxy-server-nameserver:
-    - https://223.5.5.5/dns-query
-  direct-nameserver:
-    - 223.5.5.5
-    - 223.6.6.6
-    - 119.29.29.29
+  fake-ip-filter-mode: blacklist
+  prefer-h3: false
   respect-rules: true
+  use-hosts: false
+  use-system-hosts: false
+  ipv6: true
+  fake-ip-filter:
+    - '*.lan'
+    - '*.local'
+    - '*.arpa'
+    - 'time.*.com'
+    - 'ntp.*.com'
+    - +.market.xiaomi.com
+    - localhost.ptlogin2.qq.com
+    - '*.msftncsi.com'
+    - www.msftconnecttest.com
+  default-nameserver:
+    - system
+    - 223.6.6.6
+    - 8.8.8.8
+    - '2400:3200::1'
+    - '2001:4860:4860::8888'
+  nameserver:
+    - 'https://doh.pub/dns-query'
+    - 'https://dns.alidns.com/dns-query'
+    - 8.8.8.8
+  direct-nameserver:
+    - 'https://doh.pub/dns-query'
+    - 'https://dns.alidns.com/dns-query'
+    - 223.5.5.5
+    - 119.29.29.29
+  direct-nameserver-follow-policy: true
+  fallback:
+    - 'https://1.1.1.1/dns-query'
+    - 'https://8.8.8.8/dns-query'
+    - 'https://dns.google/dns-query'
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    ipcidr:
+      - 240.0.0.0/4
+      - 0.0.0.0/32
+    domain:
+      - +.google.com
+      - +.facebook.com
+      - +.youtube.com
+      - +.twitter.com
+      - +.github.com
+  proxy-server-nameserver:
+    - 'https://doh.pub/dns-query'
+    - 'https://dns.alidns.com/dns-query'
+    - 'tls://223.5.5.5'
+tun:
+  enable: true
+  stack: system
+  auto-route: true
+  auto-detect-interface: true
+  strict-route: true
+  dns-hijack:
+    - 'any:53'
+  device: SakuraiTunnel
+  mtu: 1500
+  endpoint-independent-nat: true
 {% if local.clash.new_field_name == "true" %}
 proxies: ~
 proxy-groups: ~
