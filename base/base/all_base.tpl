@@ -7,7 +7,7 @@ allow-lan: {{ default(global.clash.allow_lan, "false") }}
 bind-address: '*'
 mode: rule
 log-level: {{ default(global.clash.log_level, "info") }}
-ipv6: false
+ipv6: true
 find-process-mode: strict
 external-controller: {{ default(global.clash.external_controller, "127.0.0.1:9090") }}
 profile:
@@ -83,17 +83,6 @@ dns:
     - 'https://doh.pub/dns-query'
     - 'https://dns.alidns.com/dns-query'
     - 'tls://223.5.5.5'
-tun:
-  enable: true
-  stack: system
-  auto-route: true
-  auto-detect-interface: true
-  strict-route: true
-  dns-hijack:
-    - 'any:53'
-  device: SakuraiTunnel
-  mtu: 1500
-  endpoint-independent-nat: true
 {% if local.clash.new_field_name == "true" %}
 proxies: ~
 proxy-groups: ~
