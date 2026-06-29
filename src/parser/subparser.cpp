@@ -3411,15 +3411,17 @@ void explodeAnyTLS(std::string anytls, Proxy &node) {
                 return false;
             host = endpoint.substr(0, portpos);
             service = endpoint.substr(portpos + 1);
-            if (firstcolon != portpos && !isIPv6(host))
+            if (firstcolon != portpos && !isIPv6(host)) {
+                host.clear();
+                service.clear();
                 return false;
+            }
         }
 
-        return !host.empty() && !service.empty() && service.find_first_not_of("0123456789") == service.npos;
+        return !host.empty() && !service.empty();
     };
 
-    if (!parseHostPort(anytls, add, port))
-        return;
+    parseHostPort(anytls, add, port);
 
     if (remarks.empty())
         remarks = isIPv6(add) ? "[" + add + "]:" + port : add + ":" + port;
