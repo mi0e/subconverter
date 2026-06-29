@@ -3394,14 +3394,35 @@ void explodeAnyTLS(std::string anytls, Proxy &node) {
         anytls = anytls.substr(pos + 1);
     }
 
-    pos = anytls.find(":");
-    if (pos != anytls.npos) {
-        add = anytls.substr(0, pos);
-        port = anytls.substr(pos + 1);
-    }
+    auto parseHostPort = [](const std::string &endpoint, std::string &host, std::string &service) -> bool {
+        if (endpoint.empty())
+            return false;
+
+        if (endpoint[0] == '[') {
+            string_size endpos = endpoint.find(']');
+            if (endpos == endpoint.npos || endpos + 1 >= endpoint.size() || endpoint[endpos + 1] != ':')
+                return false;
+            host = endpoint.substr(1, endpos - 1);
+            service = endpoint.substr(endpos + 2);
+        } else {
+            string_size firstcolon = endpoint.find(':');
+            string_size portpos = endpoint.rfind(':');
+            if (portpos == endpoint.npos)
+                return false;
+            host = endpoint.substr(0, portpos);
+            service = endpoint.substr(portpos + 1);
+            if (firstcolon != portpos && !isIPv6(host))
+                return false;
+        }
+
+        return !host.empty() && !service.empty() && service.find_first_not_of("0123456789") == service.npos;
+    };
+
+    if (!parseHostPort(anytls, add, port))
+        return;
 
     if (remarks.empty())
-        remarks = add + ":" + port;
+        remarks = isIPv6(add) ? "[" + add + "]:" + port : add + ":" + port;
 
     std::string alpn = getUrlArg(addition, "alpn");
     if (!alpn.empty()) {
