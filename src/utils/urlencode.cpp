@@ -1,6 +1,6 @@
 #include <string>
 
-#include "string.h"
+#include "urlencode.h"
 
 unsigned char toHex(unsigned char x)
 {
@@ -45,11 +45,16 @@ std::string urlEncode(const std::string& str)
 
 std::string urlDecode(const std::string& str)
 {
+    return urlDecode(str, true);
+}
+
+std::string urlDecode(const std::string& str, bool convert_plus_to_space)
+{
     std::string strTemp;
     string_size length = str.length();
     for (string_size i = 0; i < length; i++)
     {
-        if (str[i] == '+')
+        if (convert_plus_to_space && str[i] == '+')
             strTemp += ' ';
         else if (str[i] == '%')
         {

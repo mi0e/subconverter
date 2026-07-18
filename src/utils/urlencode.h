@@ -7,6 +7,7 @@
 
 std::string urlEncode(const std::string& str);
 std::string urlDecode(const std::string& str);
+std::string urlDecode(const std::string& str, bool convert_plus_to_space);
 std::string joinArguments(const string_multimap &args);
 
 #endif // URLENCODE_H_INCLUDED

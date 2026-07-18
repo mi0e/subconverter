@@ -613,11 +613,11 @@ void explodeSS(std::string ss, Proxy &node) {
     if (strFind(ss, "@")) {
         if (regGetMatch(ss, "(\\S+?)@(\\S+):(\\d+)", 4, 0, &secret, &server, &port))
             return;
-        // SIP002 requires AEAD-2022 userinfo to remain plain and percent-encoded.
+        // SIP002 userinfo is a URI component, so '+' must not be decoded as a form-space.
         auto separator = secret.find(':');
         if (separator != std::string::npos) {
-            method = urlDecode(secret.substr(0, separator));
-            password = urlDecode(secret.substr(separator + 1));
+            method = urlDecode(secret.substr(0, separator), false);
+            password = urlDecode(secret.substr(separator + 1), false);
             if (method.empty() || password.empty())
                 return;
         } else if (regGetMatch(urlSafeBase64Decode(secret), "(\\S+?):(\\S+)", 3, 0, &method, &password))
